@@ -1,17 +1,22 @@
 # Indy Action Time 
 
 ## Description
-This project seeks to explore understand non-emergency service requests in Indianapolis, IN. The Mayor of Indianapolis initiated this program in ___.
+The [Mayor's Action Center](https://www.indy.gov/activity/mayors-action-center-services) in Indianapolis, IN routes requests for services to the appropriate city department. [Request Indy](https://www.indy.gov/agency/mayors-action-center) is the point of contact with an online submisison form and phone number available for Indianapolis residents. This project seeks to explore and predict non-emergency service requests response time for residents of Indianapolis, IN.
 
 ## Project Goals
-* Identify the average time for a non-emergency service request to be closed
-* Identify difference in reponse times based in location, request type, and time of year
-* Predict how long it will take to have a non-emergency serice request addressed using a machine learning model
+* Identify the average time for a non-emergency service requests to be closed
+* Identify drivers of non-emergency service requests' response times
+* Identify areas of improvement for M
+* Predict response timeframe for non-emergency service requests with a classification machine learning model
 
 ## Project Plan
-* Acquire Data
-* Prepare data
-* Explore the data to find drivers and answer intital questions
+### Acquire
+  * Mayor's Action Center service data was acquire from [Open Indy](https://data.indy.gov/datasets/IndyGIS::mayors-action-center-service-cases/about)
+  * Demographic data was acquired from the [United States Census Bureau]()
+### Prepare
+  * 
+* Explore
+* the data to find drivers and answer intital questions
 * Create a model 
 * Evaluate
 * Conclude with recommendations and next steps
