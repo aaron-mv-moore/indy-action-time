@@ -11,15 +11,35 @@ The [Mayor's Action Center](https://www.indy.gov/activity/mayors-action-center-s
 
 ## Project Plan
 ### Acquire
-  * Mayor's Action Center service data was acquire from [Open Indy](https://data.indy.gov/datasets/IndyGIS::mayors-action-center-service-cases/about)
-  * Demographic data was acquired from the [United States Census Bureau]()
+* Mayor's Action Center (MAC) service data was acquire from [Open Indy](https://data.indy.gov/datasets/IndyGIS::mayors-action-center-service-cases/about) using the API.
+* Demographic data for the entire state of Indiana was acquired from the [United States Census Bureau]() using Census Tracts as the geographic unit interest.
+ * Assistance using [this article](https://towardsdatascience.com/scraping-us-census-data-via-cenpy-9aeab12c877e) as a guide.
 ### Prepare
-  * 
-* Explore
-* the data to find drivers and answer intital questions
-* Create a model 
-* Evaluate
-* Conclude with recommendations and next steps
+* MAC Data Preparation
+ * Address null values
+ * Format addresses for geocoding
+ * Geocode the addresses from MAC
+* Census Data Preparation
+ * Address areas of concern such as outliers, null values, incorrect data entry, etc.
+* MAC-Census Preparation
+ * Left join data uaing geocodeed addresses from MAC on the left
+ * Drop unnecessary features
+ * Create target feature
+ * Split the data
+### Explore
+* Conduct univariate analysis on each feature of interest
+* Conduct bivariate exploratory analysis with target and each feature of interest
+* Conduct bivariate exploratory analysis on non-target features that may have relationships
+* Conduct multivariate exploratory analysis with feature sub-groups
+### Model
+* Identify appropriate evaluation metric
+* Create a baseline model and evaluate
+* Create multiple models and identify the best performing
+* Test best model 
+### Conclude 
+* Summarize
+* Recommend
+* Identify next steps
 
 ## Data Dictionary
 | Feature | Definition | 
