@@ -16,16 +16,16 @@ The [Mayor's Action Center](https://www.indy.gov/activity/mayors-action-center-s
   * Assistance using [this article](https://towardsdatascience.com/scraping-us-census-data-via-cenpy-9aeab12c877e) as a guide.
 ### Prepare
 * MAC Data Preparation
-> * Address null values
-> * Format addresses for geocoding
-> * Geocode the addresses from MAC
+  * Address null values
+  * Format addresses for geocoding
+  * Geocode the addresses from MAC
 * Census Data Preparation
-> * Address areas of concern such as outliers, null values, incorrect data entry, etc.
+  * Address areas of concern such as outliers, null values, incorrect data entry, etc.
 * MAC-Census Preparation
-> * Left join data uaing geocodeed addresses from MAC on the left
-> * Drop unnecessary features
-> * Create target feature
-> * Split the data
+  * Left join data uaing geocodeed addresses from MAC on the left
+  * Drop unnecessary features
+  * Create target feature
+  * Split the data
 ### Explore
 * Conduct univariate analysis on each feature of interest
 * Conduct bivariate exploratory analysis with target and each feature of interest
