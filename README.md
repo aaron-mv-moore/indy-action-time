@@ -12,7 +12,7 @@ The [Mayor's Action Center](https://www.indy.gov/activity/mayors-action-center-s
 ## Project Plan
 ### Acquire
 * Mayor's Action Center (MAC) service data was acquire from [Open Indy](https://data.indy.gov/datasets/IndyGIS::mayors-action-center-service-cases/about) using the API.
-* Demographic data for the entire state of Indiana was acquired from the [United States Census Bureau]() using Census Tracts as the geographic unit interest.
+* Demographic data for the entire state of Indiana was acquired from the [United States Census Bureau](https://data.census.gov) using Census Tracts as the geographic unit interest.
   * Assistance using [this article](https://towardsdatascience.com/scraping-us-census-data-via-cenpy-9aeab12c877e) as a guide.
 ### Prepare
 * MAC Data Preparation
