@@ -1,15 +1,15 @@
 # Indy Action Time 
 
 ## Description
-The [Mayor's Action Center](https://www.indy.gov/activity/mayors-action-center-services) in Indianapolis, IN routes requests for services to the appropriate city department. [Request Indy](https://www.indy.gov/agency/mayors-action-center) is the point of contact with an online submisison form and phone number available for Indianapolis residents. This project seeks to explore and predict non-emergency service requests response time for residents of Indianapolis, IN.
+The [Mayor's Action Center](https://www.indy.gov/activity/mayors-action-center-services) in Indianapolis, IN routes requests for services to the appropriate city department. [Request Indy](https://www.indy.gov/agency/mayors-action-center) is the point of contact with an online submisison form and phone number available for Indianapolis residents. This project seeks to explore and predict non-emergency service requests response time for residents of Indianapolis, IN. A non-technical explanation is available [ADD LINK](). A dashboard with the basic information is available [ADD LINK]().
 
-## Project Goals
+## Goals
 * Identify the average time for a non-emergency service requests to be closed
 * Identify drivers of non-emergency service requests' response times
 * Identify areas of improvement for M
 * Predict response timeframe for non-emergency service requests with a classification machine learning model
 
-## Project Plan
+## Plan
 ### Acquire
 * Mayor's Action Center (MAC) service data was acquire from [Open Indy](https://data.indy.gov/datasets/IndyGIS::mayors-action-center-service-cases/about) using the API.
 * Demographic data for the entire state of Indiana was acquired from the [United States Census Bureau](https://data.census.gov) using Census Tracts as the geographic unit interest.
