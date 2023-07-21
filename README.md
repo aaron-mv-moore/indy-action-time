@@ -6,7 +6,7 @@ The [Mayor's Action Center](https://www.indy.gov/activity/mayors-action-center-s
 ## Goals
 * Identify the average time for a non-emergency service requests to be closed
 * Identify drivers of non-emergency service requests' response times
-* Identify areas of improvement for M
+* Identify areas of improvement for Mayor Action Center
 * Predict response timeframe for non-emergency service requests with a classification machine learning model
 
 ## Plan
