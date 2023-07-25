@@ -44,11 +44,21 @@ The [Mayor's Action Center](https://www.indy.gov/activity/mayors-action-center-s
 ## Data Dictionary
 | Feature | Definition | 
 |:--------|:-----------|
-|  |  |
-|  |  |
-|  | |
-|  | |
-|  |  |
+| STATEFP10|  |
+| COUNTYFP10|  |
+| TRACTCE10|  |
+| BLOCKCE10|  |
+| NAME10|  |
+| MTFCC10 |  |
+| UR10|  |
+| UACE10|  |
+| UATYP10 |  |
+| FUNCSTAT10|  |
+| ALAND10|  |
+| AWATER10|  |
+| INTPTLAT10 |  |
+| INTPTLON10 |  |
+
 
 
 ## Steps to Reproduce
@@ -60,4 +70,7 @@ The [Mayor's Action Center](https://www.indy.gov/activity/mayors-action-center-s
 
 ## Recommendations
 * 
+
+## Sources:
+* https://www2.census.gov/geo/pdfs/reference/GARM/Ch10GARM.pdf
 
