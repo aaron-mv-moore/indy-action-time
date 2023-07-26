@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 from acquire import get_mac_data, get_census_data
 
-def clean_mac_data():
+def get_clean_mac():
     '''
     This function acquires mac data, renames columns, changes dtypes, fills in null values for the closed date, drops all other null values,
     drops objectid, caseneumber, and source_id, and creates a new columns
@@ -40,7 +40,7 @@ def clean_mac_data():
 
     return df
 
-def get_clean_gdf10(gdf10):
+def get_clean_gdf10():
     '''
     This function drops unnecessary columns, edits names, and changes values in 2 columns
     Modules:
@@ -57,6 +57,9 @@ def get_clean_gdf10(gdf10):
 
         # return the clean data
         return pd.read_csv(file_path, index_col=0)
+    
+    # getting data
+    gdf10, gdf20 = get_census_data()
 
     # drop columns
     cols_to_drop = ['fid', 'uace10', 'uatype', 'statefp10', 'ur10','funcstat10','mtfcc10','intptlon10','intptlat10']
@@ -72,11 +75,12 @@ def get_clean_gdf10(gdf10):
     gdf10.to_csv(file_path)
                                           
     return gdf10
-
     
 
 
-def get_clean_gdf20(gdf20):
+
+
+def get_clean_gdf20():
     '''
     This function drops unnecessary columns, edits names, and changes values in 2 columns
     Modules:
@@ -93,6 +97,9 @@ def get_clean_gdf20(gdf20):
 
         # return the clean data
         return pd.read_csv(file_path, index_col=0)
+    
+    # getting data
+    gdf10, gdf20 = get_census_data()
 
     # drop columns
     cols_to_drop = ['fid', 'uace20', 'uatype20', 'statefp20', 'ur20','funcstat20','mtfcc20','intptlon20','intptlat20']
