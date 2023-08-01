@@ -38,6 +38,9 @@ def get_clean_mac():
     # adding the time from creation to closing
     df['close_time'] = df['closed'] - df['created']
 
+    # adding the state
+    df['state'] = 'IN'
+    
     return df
 
 def get_clean_gdf10():
