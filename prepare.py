@@ -62,7 +62,7 @@ def get_clean_gdf10():
     gdf10, gdf20 = get_census_data()
 
     # drop columns
-    cols_to_drop = ['fid', 'uace10', 'uatype', 'statefp10', 'ur10','funcstat10','mtfcc10','intptlon10','intptlat10']
+    cols_to_drop = ['fid', 'uace10', 'uatype', 'statefp10', 'ur10','funcstat10','mtfcc10']
     gdf10.drop(cols_to_drop, axis=1, inplace=True)
 
     # strip unecesasry values and change feature name
@@ -102,7 +102,7 @@ def get_clean_gdf20():
     gdf10, gdf20 = get_census_data()
 
     # drop columns
-    cols_to_drop = ['fid', 'uace20', 'uatype20', 'statefp20', 'ur20','funcstat20','mtfcc20','intptlon20','intptlat20']
+    cols_to_drop = ['fid', 'uace20', 'uatype20', 'statefp20', 'ur20','funcstat20','mtfcc20']
     gdf20.drop(cols_to_drop, axis=1, inplace=True)
 
     # strip unecesasry values and change feature name
