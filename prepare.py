@@ -1,6 +1,6 @@
 import pandas as pd
 from pathlib import Path
-from acquire import get_mac_data, get_census_data
+from acquire import get_mac_data, get_census_data, get_2020_census_data, get_2020_census_labels
 
 def get_clean_mac():
     '''
@@ -29,7 +29,6 @@ def get_clean_mac():
     df.closed.fillna(pd.Timestamp.max.floor('30D').tz_localize('US/Eastern'), inplace=True)
 
     # dropping null values
-    print(f'Dropping {df.shape[0] - df.dropna().shape[0]} rows')
     df.dropna(inplace=True)
 
     # dropping the unneeded columns
@@ -40,6 +39,9 @@ def get_clean_mac():
 
     # adding the state
     df['state'] = 'IN'
+
+    # changing the dtpye
+    df['zip'] = df['zip'].astype('str')
     
     return df
 
@@ -119,3 +121,47 @@ def get_clean_gdf20():
                                           
     return gdf20
     
+def get_clean_2020_census():
+    '''
+    This function cleans the 2020 Decennial Census Data
+    Modules:
+        get_2020_census_data
+        get_2020_census_labels
+    '''
+    # get and check data
+    df = get_2020_census_data()
+
+    # getting labels
+    labels = get_2020_census_labels()
+
+    # drop all columns with nulls
+    df.dropna(axis=1, inplace = True)
+
+    # getting a list of the column names fromt he labels
+    col_names = list(df.columns.map(labels['label']))
+
+    # cleaning list
+    cleaned_list = [x for x in col_names if str(x) != 'nan']
+
+    # adding missing col nmes
+    cleaner_list = cleaned_list + ['state', 'zip']
+
+    # change col names
+    df.columns = cleaner_list
+
+    # format col names
+    df.columns = df.columns.str.lower().str.replace(' ', '_').str.replace('!!', '_')
+
+    # rearranging the zip codes
+    df = df.set_index('zip').reset_index()
+
+    # getting a list of the columns that have less than only one value count
+    ls = []
+    for col in df.columns:
+        if len(df[col].value_counts()) < 5:
+            ls.append(col)
+    
+    # drop the columns with only a few value_counts
+    df.drop(ls, axis=1, inplace = True)
+
+    return df

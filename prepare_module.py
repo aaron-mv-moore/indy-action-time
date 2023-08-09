@@ -31,7 +31,7 @@ def split_data(df, stratify_on=None):
         train_validate, test = train_test_split(df, train_size=.8, random_state = 1017)
         
         # splitting train_validate 70/30
-        train, validate = train_test_split(train_validate, train_size=.7)
+        train, validate = train_test_split(train_validate, train_size=.7, random_state=1017)
     
     return train, validate, test
 

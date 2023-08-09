@@ -1,7 +1,9 @@
 # Indy Action Time 
 
 ## Description
-The [Mayor's Action Center](https://www.indy.gov/activity/mayors-action-center-services) in Indianapolis, IN routes requests for services to the appropriate city department. [Request Indy](https://www.indy.gov/agency/mayors-action-center) is the point of contact with an online submisison form and phone number available for Indianapolis residents. This project seeks to explore and predict non-emergency service requests response time for residents of Indianapolis, IN. A non-technical explanation is available [ADD LINK](). A dashboard with the basic information is available [ADD LINK](). 
+The [Mayor's Action Center](https://www.indy.gov/activity/mayors-action-center-services) in Indianapolis, IN routes requests for services to the appropriate city department. [Request Indy](https://www.indy.gov/agency/mayors-action-center) is the point of contact with an online submisison form and phone number available for Indianapolis residents. This project seeks to explore and predict non-emergency service requests response time for residents of Indianapolis, IN.
+
+A non-technical explanation and a dashboard will be available upon completion of this project. 
 
 
 ## Goals
