@@ -44,7 +44,7 @@ A non-technical explanation and a dashboard will be available upon completion of
 * Recommend
 * Identify next steps
 
-## Data Dictionary
+## Data Dictionary TBD
 | Feature | Definition | 
 |:--------|:-----------|
 | STATEFP10|  |
@@ -68,10 +68,10 @@ A non-technical explanation and a dashboard will be available upon completion of
 1. Clone this repo
 2. 
 
-## Takeaways
+## Takeaways TBD
 * 
 
-## Recommendations
+## Recommendations TBD
 * 
 
 ## Sources:

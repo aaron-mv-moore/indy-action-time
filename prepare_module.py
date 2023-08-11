@@ -198,7 +198,7 @@ def remove_outliers(df, k=1.5):
         # calculates the upper fence
         upper_fence = col_qs[col][0.75] + (iqr*k)
         
-        # remove outliers from df for each col
+        # remove outliers from df for each column
         df = df[(df[col] > lower_fence) & (df[col] < upper_fence)]
         
     # exit df and return new df
