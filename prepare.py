@@ -1,6 +1,73 @@
 import pandas as pd
 from pathlib import Path
-from acquire import get_mac_data, get_census_data, get_2020_census_data, get_2020_census_labels
+import requests
+from sklearn.model_selection import train_test_split
+
+# AQCUISITION 
+
+def get_census_data():
+    '''
+    This module acquires the census block identifiers and geometry for the 2020 and 2010 Deciennieal Census 
+    Modules:
+        import pandas as pd
+    '''
+    # acquire the data from 2010
+    gdf10 = pd.read_csv('data/Census_Block_Boundaries_2010.csv')
+
+    # acquire the census blocks from 2020
+    gdf20 = pd.read_csv('data/Census_Block_Boundaries_2020.csv')
+    
+    return gdf10, gdf20
+
+
+# creating a function to acquire the raw dfata
+def get_mac_data():
+    '''
+    This function acquires the Mayor Action Center's Service Cases
+    Modules required:
+        import pandas as pd
+    '''
+    # read the file
+    df = pd.read_csv('data/Mayor_s_Action_Center_Service_Cases.csv')
+
+    return df
+
+
+def get_2020_census_data():
+    '''
+    This function gets 2020 deciennial data from the census bureau api website for all Zip Code Tabulation Areas (ZCTAs) in the state of Indiana
+    Modules:
+        import pandas as pd
+        import requests
+    '''
+    # assign url
+    url = 'https://api.census.gov/data/2020/dec/dp?get=group(DP1)&for=zip%20code%20tabulation%20area%20(or%20part):*&in=state:18'
+
+    # get data and turn into json
+    r = requests.get(url).json()
+
+    # create data frame
+    df = pd.DataFrame(r[1:], columns=r[0])
+
+    return df
+
+
+def get_2020_census_labels():
+    '''
+    This function pulls that labels associated woith th column names for the 2020 diciennial census data
+    '''
+    # assign url
+    url = 'https://api.census.gov/data/2020/dec/dp/groups/DP1/'
+
+    # get data and turn into json
+    r = requests.get(url).json()
+
+    # convert to df
+    df = pd.DataFrame(r['variables']).T
+
+    return df
+
+# PREPARATION
 
 def get_clean_mac():
     '''
@@ -82,9 +149,6 @@ def get_clean_gdf10():
     return gdf10
     
 
-
-
-
 def get_clean_gdf20():
     '''
     This function drops unnecessary columns, edits names, and changes values in 2 columns
@@ -165,3 +229,57 @@ def get_clean_2020_census():
     df.drop(ls, axis=1, inplace = True)
 
     return df
+
+# WRANGLING
+
+def split_data(df, stratify_on=None):
+    '''
+    Arguments: prepared dataframe, optional target - must be a string literal that is a column title
+    Actions: 
+        1. Splits the dataframe with 80% of the data assigned to tv and 20% assigned to test
+        2. Splits the tv dataset with 70% of tv assigned to train and 30% assigned to validate
+    Returns: 3 variables, each containing a portion
+    Modules: from sklearn.model_selection import train_test_split, pandas as pd
+    Note: Order matters with variable assignment
+    '''
+    
+    # when the target is a string that is a column title
+    if stratify_on in df.columns.to_list():
+        # the data is split 80/20 with the target used for stratification
+        train_validate, test = train_test_split(df, train_size=.8, random_state = 1017,
+                stratify = df[stratify_on])
+        
+         # splitting train_validate 70/30 with the target used for stratification
+        train, validate = train_test_split(train_validate, train_size=.7, stratify=train_validate[stratify_on])
+    # for all other targets
+    else:
+        # inform user that there is no stratification
+        print('No stratification applied during the split')
+        
+        # split that data 80/20
+        train_validate, test = train_test_split(df, train_size=.8, random_state = 1017)
+        
+        # splitting train_validate 70/30
+        train, validate = train_test_split(train_validate, train_size=.7, random_state=1017)
+    
+    return train, validate, test
+
+def wrangle_data():
+    '''
+    This function
+    Modules:
+        import pandas as pd
+        from prepare import get_clean_2020_census, get_clean_mac
+        from prepare_module import split_data
+    '''
+    # getting data
+    mac = get_clean_mac()
+    census = get_clean_2020_census()
+
+    # merge data sets
+    df = pd.merge(mac, census, how='left', on='zip' )
+
+    # split data
+    train, validate, test = split_data(df)
+
+    return df, train, validate, test
