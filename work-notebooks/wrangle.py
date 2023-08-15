@@ -1,4 +1,5 @@
 import pandas as pd
+from prepare_module import remove_outliers
 from pathlib import Path
 import requests
 from sklearn.model_selection import train_test_split
@@ -69,20 +70,23 @@ def get_2020_census_labels():
 
 # PREPARATION
 
-def get_clean_mac():
+def get_clean_mac(status_focus = 'closed'):
     '''
     This function acquires mac data, renames columns, changes dtypes, fills in null values for the closed date, drops all other null values,
     drops objectid, caseneumber, and source_id, and creates a new columns
+    KWARG: status_focus: 'closed' drops all open status cases and the status column
     Modules:
         from acquire import get_mac_data
         import pandas as pd
     '''
+    # get data
     df = get_mac_data()
 
-    # change columsn names to lower, remove the __c, and remove 'date'
+    # change columsn names to lower, remove the __c and that's it
     col_rename = {}
 
     for col in df.columns:
+       
         col_rename[col] = col.lower().replace('__c', '').replace('date', '')
 
     col_rename['LASTMODIFIEDDATE'] = 'last_modified'
@@ -92,24 +96,42 @@ def get_clean_mac():
     # changing multiple columns to date time dtype
     df[['created','last_modified', 'closed']] = df[['created','last_modified', 'closed']].apply(pd.to_datetime)
 
-    # filling in the closeddate nulls with the date the furthest out
-    df.closed.fillna(pd.Timestamp.max.floor('30D').tz_localize('US/Eastern'), inplace=True)
-
     # dropping null values
+    # print(f'Dropping {df.shape[0] - df.dropna().shape[0]} rows')
     df.dropna(inplace=True)
 
+    # KWARG if we only focus on closed status
+    if status_focus == 'closed':
+
+        # keep only closed status cases
+        df = df[df.status == 'Closed']
+
+        # and drop the status col bc no variance
+        df.drop('status', axis=1, inplace=True)    
+        
+    # KWARG if we want open - keep it the same
+    elif status_focus == 'open': 
+    
+        pass
+
     # dropping the unneeded columns
-    df.drop(['objectid', 'casenumber', 'source_id'], axis=1, inplace=True)
+    df.drop(['objectid', 'casenumber', 'source_id', 'incident_address', 'last_modified'], axis=1, inplace=True)
+
+    # changing dtype to string object
+    df['council_district'] = df.council_district.astype(int).astype(str)
+    df['zip'] = df.zip.astype(str)
 
     # adding the time from creation to closing
-    df['close_time'] = df['closed'] - df['created']
+    df['response_time'] = df['closed'] - df['created']
+    
+    # removing outliers
+    df = remove_outliers(df, k=3)
+    
+    # created the reponse rating
+    df['response_rating'] = pd.cut(df['response_time'], 5, labels=['excellent', 'great', 'good', 'fair','poor'])
 
-    # adding the state
-    # df['state'] = 'IN'
-
-    # changing the dtpye
-    df['zip'] = df['zip'].astype('str')
-    df['council_district'] = df['council_district'].astype('str')
+    # dropping response_time
+    df.drop(['response_time', 'created', 'closed'], axis=1, inplace=True)
     
     return df
 
@@ -255,7 +277,7 @@ def split_data(df, stratify_on=None):
     # for all other targets
     else:
         # inform user that there is no stratification
-        print('No stratification applied during the split')
+        # print('No stratification applied during the split')
         
         # split that data 80/20
         train_validate, test = train_test_split(df, train_size=.8, random_state = 1017)
