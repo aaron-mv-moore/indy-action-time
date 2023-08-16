@@ -70,6 +70,51 @@ def get_2020_census_labels():
 
 # PREPARATION
 
+def clean_mac_keywords(df):
+    '''
+    This function cleans the keywords and some of the subcategories when applicable. 
+    '''
+    # all together
+    mask = ['keyword', 'subcategory']
+
+    # Combining 3 keywords into one
+    replace_values = { 'Debris/Litter' : 'dumping_debris', 'Illegal Dumping' : 'dumping_debris', 'Illegal Dumping and Junk/Trash' : 'dumping_debris' }
+    df.replace({'keyword' : replace_values}, inplace=True)
+
+    # Changing the keyword for a chuckhole
+    chuck_street_mask = (df['subcategory'] == 'Street (Chuckhole)') & (df['keyword'] == 'Streets')
+    df.loc[chuck_street_mask, 'keyword'] = 'Chuckhole'
+
+    # Changing the keyword for the caveins to chuck holes also
+    chuck_street_cave_mask = (df['subcategory'] == 'Cave In')
+    df.loc[chuck_street_cave_mask, 'keyword'] = 'Chuckhole'
+
+    # replacing the / in  'Raised/Uneven Surface' to create one subcategory  'Raised Uneven Surface'
+    streets_key_mask = df['keyword'] == 'Streets'
+    df.loc[streets_key_mask, 'subcategory'] = df.loc[streets_key_mask, 'subcategory'].str.replace('/', ' ')
+
+    # Changing the keyword from 'Alley' to  'dumping_debris'
+    brush_debris_mask = df['subcategory'] == 'Brush/Vegetation Removal'
+    df.loc[brush_debris_mask, 'keyword'] =  'dumping_debris'
+    # changing 'Brush/Vegetation Removal' to 'Debris in Alley/Street' for consistency
+    df.loc[brush_debris_mask, 'subcategory'] = 'Debris in Alley/Street'
+
+    # combiningg alley and street keyword into one
+    alley_streets_mask = (df['keyword'] == 'Alley') | (df['keyword'] == 'Streets')
+    df.loc[alley_streets_mask,'keyword'] = 'streets_alley'
+    # adding alley to ruts/grade in case there is noticeable difference
+    rg_alley_mask = df['subcategory'] == 'Ruts/Grade'
+    df.loc[rg_alley_mask,'subcategory'] = 'Ruts/Grade Alley'
+
+    # replacing the plus signs in the keywords to merge groups
+    df['keyword'] = df['keyword'].str.replace('+', ' ')
+
+    # correcting a keyword error Signals to Signs
+    request_signs_mask = df['subcategory'] == 'Request (Signs)'
+    df.loc[request_signs_mask, 'keyword'] = 'Signs/Traffic Signs'
+
+    return df
+
 def get_clean_mac(status_focus = 'closed'):
     '''
     This function acquires mac data, renames columns, changes dtypes, fills in null values for the closed date, drops all other null values,
@@ -92,6 +137,8 @@ def get_clean_mac(status_focus = 'closed'):
     col_rename['LASTMODIFIEDDATE'] = 'last_modified'
 
     df.rename(col_rename, axis=1, inplace = True)
+
+    df = clean_mac_keywords(df)
 
     # changing multiple columns to date time dtype
     df[['created','last_modified', 'closed']] = df[['created','last_modified', 'closed']].apply(pd.to_datetime)
@@ -130,7 +177,7 @@ def get_clean_mac(status_focus = 'closed'):
     # created the reponse rating
     df['response_rating'] = pd.cut(df['response_time'], 5, labels=['excellent', 'great', 'good', 'fair','poor'])
 
-    # dropping response_time
+    # dropping time related columns
     df.drop(['response_time', 'created', 'closed'], axis=1, inplace=True)
     
     return df
