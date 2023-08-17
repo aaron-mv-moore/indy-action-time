@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from prepare_module import remove_outliers
 from pathlib import Path
 import requests
@@ -363,22 +364,22 @@ def split_data(df, stratify_on=None):
     
     return train, validate, test
 
-def wrangle_data():
-    '''
-    This function
-    Modules:
-        import pandas as pd
-        from prepare import get_clean_2020_census, get_clean_mac
-        from prepare_module import split_data
-    '''
-    # getting data
-    mac = get_clean_mac()
-    census = get_clean_2020_census()
+# def wrangle_data():
+#     '''
+#     This function
+#     Modules:
+#         import pandas as pd
+#         from prepare import get_clean_2020_census, get_clean_mac
+#         from prepare_module import split_data
+#     '''
+#     # getting data
+#     mac = get_clean_mac()
+#     census = get_clean_2020_census()
 
-    # merge data sets
-    df = pd.merge(mac, census, how='left', on='zip' )
+#     # merge data sets
+#     df = pd.merge(mac, census, how='left', on='zip' )
 
-    # split data
-    train, validate, test = split_data(df)
+#     # split data
+#     train, validate, test = split_data(df)
 
-    return df, train, validate, test
+#     return df, train, validate, test
