@@ -115,6 +115,32 @@ def clean_mac_keywords(df):
 
     return df
 
+def get_feature_num_cases(df):
+    '''
+    This function takes a df and creates a new columns that represents all the open cases at the time of the case creation date.
+    '''
+    # sorting the values and reset the index
+    df.sort_values(by='created', inplace = True)
+    df.reset_index(inplace=True)
+
+    # Create a list with values for num of cases
+    res = []
+    # create series with closed dates
+    temp = df['closed']
+
+    # for each row contents and inde of each row
+    for i, row in df.iterrows():
+        # get the sum of all the Trues from comparing the creation date to all the close dates 
+        # (if close date less than the open date then the older case is closed so false)
+        temp_res = np.sum(row['created'] < temp.iloc[:i])
+        # add the values in order
+        res.append(temp_res)
+
+    # add column with the results
+    df['num_open_cases'] = res
+
+    return df
+
 def get_clean_mac(status_focus = 'closed'):
     '''
     This function acquires mac data, renames columns, changes dtypes, fills in null values for the closed date, drops all other null values,
@@ -173,132 +199,135 @@ def get_clean_mac(status_focus = 'closed'):
     
     # removing outliers
     df = remove_outliers(df, k=3)
-    
-    # created the reponse rating
-    df['response_rating'] = pd.cut(df['response_time'], 5, labels=['excellent', 'great', 'good', 'fair','poor'])
+
+    # get new feature
+    df = get_feature_num_cases(df)
+
+    # making the reponse times discrete time frames
+    df['response_time_frame'] = pd.cut(df['response_time'], 5, labels=['one week', '2 weeks', '3 weeks', '4 weeks','5 weeks'])
 
     # dropping time related columns
-    df.drop(['response_time', 'created', 'closed'], axis=1, inplace=True)
+    df.drop(['response_time', 'created', 'closed', 'index'], axis=1, inplace=True)
     
     return df
 
-def get_clean_gdf10():
-    '''
-    This function drops unnecessary columns, edits names, and changes values in 2 columns
-    Modules:
-        from pathlib import Path
-        import pandas as pd
-    '''
+# def get_clean_gdf10():
+#     '''
+#     This function drops unnecessary columns, edits names, and changes values in 2 columns
+#     Modules:
+#         from pathlib import Path
+#         import pandas as pd
+#     '''
 
-    # create file path
-    data_path = Path('../data')
-    file_path = data_path.joinpath('Census_Block_Boundaries_2010_Clean.csv')
+#     # create file path
+#     data_path = Path('../data')
+#     file_path = data_path.joinpath('Census_Block_Boundaries_2010_Clean.csv')
 
-    # check for clean data file 
-    if file_path.exists():
+#     # check for clean data file 
+#     if file_path.exists():
 
-        # return the clean data
-        return pd.read_csv(file_path, index_col=0)
+#         # return the clean data
+#         return pd.read_csv(file_path, index_col=0)
     
-    # getting data
-    gdf10, gdf20 = get_census_data()
+#     # getting data
+#     gdf10, gdf20 = get_census_data()
 
-    # drop columns
-    cols_to_drop = ['fid', 'uace10', 'uatype', 'statefp10', 'ur10','funcstat10','mtfcc10']
-    gdf10.drop(cols_to_drop, axis=1, inplace=True)
+#     # drop columns
+#     cols_to_drop = ['fid', 'uace10', 'uatype', 'statefp10', 'ur10','funcstat10','mtfcc10']
+#     gdf10.drop(cols_to_drop, axis=1, inplace=True)
 
-    # strip unecesasry values and change feature name
-    gdf10.loc[:,'name10'] = gdf10.loc[:,'name10'].str.strip('Block ')
-    gdf10.rename({'name10':'blockname10'}, axis=1, inplace=True)
+#     # strip unecesasry values and change feature name
+#     gdf10.loc[:,'name10'] = gdf10.loc[:,'name10'].str.strip('Block ')
+#     gdf10.rename({'name10':'blockname10'}, axis=1, inplace=True)
 
-    # lowercase columns and remove extra '_'
-    gdf10.columns = gdf10.columns.str.lower().str.replace('__', '_')
+#     # lowercase columns and remove extra '_'
+#     gdf10.columns = gdf10.columns.str.lower().str.replace('__', '_')
 
-    gdf10.to_csv(file_path)
+#     gdf10.to_csv(file_path)
                                           
-    return gdf10
+#     return gdf10
     
 
-def get_clean_gdf20():
-    '''
-    This function drops unnecessary columns, edits names, and changes values in 2 columns
-    Modules:
-        from pathlib import Path
-        import pandas as pd
-    '''
+# def get_clean_gdf20():
+#     '''
+#     This function drops unnecessary columns, edits names, and changes values in 2 columns
+#     Modules:
+#         from pathlib import Path
+#         import pandas as pd
+#     '''
 
-    # create file path
-    data_path = Path('../data')
-    file_path = data_path.joinpath('Census_Block_Boundaries_2020_Clean.csv')
+#     # create file path
+#     data_path = Path('../data')
+#     file_path = data_path.joinpath('Census_Block_Boundaries_2020_Clean.csv')
 
-    # check for clean data file 
-    if file_path.exists():
+#     # check for clean data file 
+#     if file_path.exists():
 
-        # return the clean data
-        return pd.read_csv(file_path, index_col=0)
+#         # return the clean data
+#         return pd.read_csv(file_path, index_col=0)
     
-    # getting data
-    gdf10, gdf20 = get_census_data()
+#     # getting data
+#     gdf10, gdf20 = get_census_data()
 
-    # drop columns
-    cols_to_drop = ['fid', 'uace20', 'uatype20', 'statefp20', 'ur20','funcstat20','mtfcc20']
-    gdf20.drop(cols_to_drop, axis=1, inplace=True)
+#     # drop columns
+#     cols_to_drop = ['fid', 'uace20', 'uatype20', 'statefp20', 'ur20','funcstat20','mtfcc20']
+#     gdf20.drop(cols_to_drop, axis=1, inplace=True)
 
-    # strip unecesasry values and change feature name
-    gdf20.loc[:,'name20'] = gdf20.loc[:,'name20'].str.strip('Block ')
-    gdf20.rename({'name20':'blockname20'}, axis=1, inplace=True)
+#     # strip unecesasry values and change feature name
+#     gdf20.loc[:,'name20'] = gdf20.loc[:,'name20'].str.strip('Block ')
+#     gdf20.rename({'name20':'blockname20'}, axis=1, inplace=True)
 
-    # lowercase columns and remove extra '_'
-    gdf20.columns = gdf20.columns.str.lower().str.replace('__', '_')
+#     # lowercase columns and remove extra '_'
+#     gdf20.columns = gdf20.columns.str.lower().str.replace('__', '_')
 
-    gdf20.to_csv(file_path)
+#     gdf20.to_csv(file_path)
                                           
-    return gdf20
+#     return gdf20
     
-def get_clean_2020_census():
-    '''
-    This function cleans the 2020 Decennial Census Data
-    Modules:
-        get_2020_census_data
-        get_2020_census_labels
-    '''
-    # get and check data
-    df = get_2020_census_data()
+# def get_clean_2020_census():
+#     '''
+#     This function cleans the 2020 Decennial Census Data
+#     Modules:
+#         get_2020_census_data
+#         get_2020_census_labels
+#     '''
+#     # get and check data
+#     df = get_2020_census_data()
 
-    # getting labels
-    labels = get_2020_census_labels()
+#     # getting labels
+#     labels = get_2020_census_labels()
 
-    # drop all columns with nulls
-    df.dropna(axis=1, inplace = True)
+#     # drop all columns with nulls
+#     df.dropna(axis=1, inplace = True)
 
-    # getting a list of the column names fromt he labels
-    col_names = list(df.columns.map(labels['label']))
+#     # getting a list of the column names fromt he labels
+#     col_names = list(df.columns.map(labels['label']))
 
-    # cleaning list
-    cleaned_list = [x for x in col_names if str(x) != 'nan']
+#     # cleaning list
+#     cleaned_list = [x for x in col_names if str(x) != 'nan']
 
-    # adding missing col nmes
-    cleaner_list = cleaned_list + ['state', 'zip']
+#     # adding missing col nmes
+#     cleaner_list = cleaned_list + ['state', 'zip']
 
-    # change col names
-    df.columns = cleaner_list
+#     # change col names
+#     df.columns = cleaner_list
 
-    # format col names
-    df.columns = df.columns.str.lower().str.replace(' ', '_').str.replace('!!', '_')
+#     # format col names
+#     df.columns = df.columns.str.lower().str.replace(' ', '_').str.replace('!!', '_')
 
-    # rearranging the zip codes
-    df = df.set_index('zip').reset_index()
+#     # rearranging the zip codes
+#     df = df.set_index('zip').reset_index()
 
-    # getting a list of the columns that have less than only one value count
-    ls = []
-    for col in df.columns:
-        if len(df[col].value_counts()) < 5:
-            ls.append(col)
+#     # getting a list of the columns that have less than only one value count
+#     ls = []
+#     for col in df.columns:
+#         if len(df[col].value_counts()) < 5:
+#             ls.append(col)
     
-    # drop the columns with only a few value_counts
-    df.drop(ls, axis=1, inplace = True)
+#     # drop the columns with only a few value_counts
+#     df.drop(ls, axis=1, inplace = True)
 
-    return df
+#     return df
 
 # WRANGLING
 
