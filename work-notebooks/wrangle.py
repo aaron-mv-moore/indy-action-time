@@ -7,19 +7,19 @@ from sklearn.model_selection import train_test_split
 
 # AQCUISITION 
 
-def get_census_data():
-    '''
-    This module acquires the census block identifiers and geometry for the 2020 and 2010 Deciennieal Census 
-    Modules:
-        import pandas as pd
-    '''
-    # acquire the data from 2010
-    gdf10 = pd.read_csv('../data/Census_Block_Boundaries_2010.csv')
+# def get_census_data():
+#     '''
+#     This module acquires the census block identifiers and geometry for the 2020 and 2010 Deciennieal Census 
+#     Modules:
+#         import pandas as pd
+#     '''
+#     # acquire the data from 2010
+#     gdf10 = pd.read_csv('../data/Census_Block_Boundaries_2010.csv')
 
-    # acquire the census blocks from 2020
-    gdf20 = pd.read_csv('../data/Census_Block_Boundaries_2020.csv')
+#     # acquire the census blocks from 2020
+#     gdf20 = pd.read_csv('../data/Census_Block_Boundaries_2020.csv')
     
-    return gdf10, gdf20
+#     return gdf10, gdf20
 
 
 # creating a function to acquire the raw dfata
@@ -35,41 +35,94 @@ def get_mac_data():
     return df
 
 
-def get_2020_census_data():
-    '''
-    This function gets 2020 deciennial data from the census bureau api website for all Zip Code Tabulation Areas (ZCTAs) in the state of Indiana
-    Modules:
-        import pandas as pd
-        import requests
-    '''
-    # assign url
-    url = 'https://api.census.gov/data/2020/dec/dp?get=group(DP1)&for=zip%20code%20tabulation%20area%20(or%20part):*&in=state:18'
+# def get_2020_census_data():
+#     '''
+#     This function gets 2020 deciennial data from the census bureau api website for all Zip Code Tabulation Areas (ZCTAs) in the state of Indiana
+#     Modules:
+#         import pandas as pd
+#         import requests
+#     '''
+#     # assign url
+#     url = 'https://api.census.gov/data/2020/dec/dp?get=group(DP1)&for=zip%20code%20tabulation%20area%20(or%20part):*&in=state:18'
 
-    # get data and turn into json
-    r = requests.get(url).json()
+#     # get data and turn into json
+#     r = requests.get(url).json()
 
-    # create data frame
-    df = pd.DataFrame(r[1:], columns=r[0])
+#     # create data frame
+#     df = pd.DataFrame(r[1:], columns=r[0])
+
+#     return df
+
+
+# def get_2020_census_labels():
+#     '''
+#     This function pulls that labels associated woith th column names for the 2020 diciennial census data
+#     '''
+#     # assign url
+#     url = 'https://api.census.gov/data/2020/dec/dp/groups/DP1/'
+
+#     # get data and turn into json
+#     r = requests.get(url).json()
+
+#     # convert to df
+#     df = pd.DataFrame(r['variables']).T
+
+#     return df
+
+### PREPARATION
+
+def clean_mac_col_names(df):
+    '''
+    This function cleans all the column names for the mac data set
+    '''
+     # change columsn names to lower, remove the __c, remove date, add a space
+    col_rename = {}
+
+    for col in df.columns:
+       
+        col_rename[col] = col.lower().replace('__c', '').replace('date', '')
+
+    col_rename['LASTMODIFIEDDATE'] = 'last_modified'
+
+    df.rename(col_rename, axis=1, inplace = True)
 
     return df
 
-
-def get_2020_census_labels():
+def clean_mac_dtypes(df):
     '''
-    This function pulls that labels associated woith th column names for the 2020 diciennial census data
-    '''
-    # assign url
-    url = 'https://api.census.gov/data/2020/dec/dp/groups/DP1/'
+    Change the data type of council district and zip code to string object, change date columns to date time format
+    '''   
+    # changing dtype to string object
+    df['council_district'] = df.council_district.astype(int).astype(str)
+    df['zip'] = df.zip.astype(str)
 
-    # get data and turn into json
-    r = requests.get(url).json()
-
-    # convert to df
-    df = pd.DataFrame(r['variables']).T
+    # changing multiple columns to date time dtype
+    df[['created','last_modified', 'closed']] = df[['created','last_modified', 'closed']].apply(pd.to_datetime)
 
     return df
 
-# PREPARATION
+def drop_mac_cols(df, status_focus):
+    '''
+    This function drops
+    '''
+    # KWARG if we only focus on closed status
+    if status_focus == 'closed':
+
+        # keep only closed status cases
+        df = df[df.status == 'Closed']
+
+        # and drop the status col bc no variance
+        df.drop('status', axis=1, inplace=True)    
+        
+    # KWARG if we want open - keep it the same
+    elif status_focus == 'open': 
+    
+        pass
+
+    # dropping the unneeded columns
+    df.drop(['objectid', 'casenumber', 'source_id', 'incident_address', 'last_modified', 'response_time', 'created', 'closed', 'index', 'city'], axis=1, inplace=True)
+
+    return df
 
 def clean_mac_keywords(df):
     '''
@@ -155,60 +208,32 @@ def get_clean_mac(status_focus = 'closed'):
     df = get_mac_data()
 
     # change columsn names to lower, remove the __c and that's it
-    col_rename = {}
-
-    for col in df.columns:
-       
-        col_rename[col] = col.lower().replace('__c', '').replace('date', '')
-
-    col_rename['LASTMODIFIEDDATE'] = 'last_modified'
-
-    df.rename(col_rename, axis=1, inplace = True)
-
-    df = clean_mac_keywords(df)
-
-    # changing multiple columns to date time dtype
-    df[['created','last_modified', 'closed']] = df[['created','last_modified', 'closed']].apply(pd.to_datetime)
-
+    df = clean_mac_col_names(df)
+    
     # dropping null values
     # print(f'Dropping {df.shape[0] - df.dropna().shape[0]} rows')
     df.dropna(inplace=True)
 
-    # KWARG if we only focus on closed status
-    if status_focus == 'closed':
-
-        # keep only closed status cases
-        df = df[df.status == 'Closed']
-
-        # and drop the status col bc no variance
-        df.drop('status', axis=1, inplace=True)    
-        
-    # KWARG if we want open - keep it the same
-    elif status_focus == 'open': 
-    
-        pass
-
-    # dropping the unneeded columns
-    df.drop(['objectid', 'casenumber', 'source_id', 'incident_address', 'last_modified'], axis=1, inplace=True)
-
-    # changing dtype to string object
-    df['council_district'] = df.council_district.astype(int).astype(str)
-    df['zip'] = df.zip.astype(str)
+    # change zip, council dtypes and created, closed, last modified dtypes
+    df = clean_mac_dtypes(df)
 
     # adding the time from creation to closing
     df['response_time'] = df['closed'] - df['created']
-    
+
     # removing outliers
     df = remove_outliers(df, k=3)
 
     # get new feature
+    # sorting the values and reset the index
+    df.sort_values(by='created', inplace = True)
+    df.reset_index(inplace=True)
     df = get_feature_num_cases(df)
 
-    # making the reponse times discrete time frames
-    df['response_time_frame'] = pd.cut(df['response_time'], 5, labels=['one week', '2 weeks', '3 weeks', '4 weeks','5 weeks'])
+    # getting new binary target
+    df['is_less_than_one_week'] = (df['closed'] - df['created']) <  pd.Timedelta('1W')
 
-    # dropping time related columns
-    df.drop(['response_time', 'created', 'closed', 'index'], axis=1, inplace=True)
+    # drop unecessayr columns
+    df = drop_mac_cols(df, status_focus=status_focus)
     
     return df
 
