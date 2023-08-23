@@ -46,19 +46,20 @@ A non-technical explanation and a dashboard will be available upon completion of
 * Is there a relationship between keywords and response times?
 * Is there a relationship between subcategories and response times?
 * Is there a relationship beteen the number of open cases and response times?
-* Is there a relationship between the number of open cases in a zip code and response times?
+<!-- * Is there a relationship between the number of open cases in a zip code and response times?
 * Is there a relationship between the number of open cases for a keyword and repsonse times?
 * Is there a relationship between the number of open cases for a subcategory and response times?
 * Is there a relationship between the number of open cases for a keyword in a zip code and response times?
-* Is there a relationship between the number of open cases for a subcategory in a zip code and response times?
+* Is there a relationship between the number of open cases for a subcategory in a zip code and response times? -->
 ### Model
-* [Multi-class evaluation](https://towardsdatascience.com/comprehensive-guide-on-multiclass-classification-metrics-af94cfb83fbd) - F1 Score 
+<!-- * [Multi-class evaluation](https://towardsdatascience.com/comprehensive-guide-on-multiclass-classification-metrics-af94cfb83fbd) - F1 Score 
   * True Positives Type 1: Actual and predicted is 1 week
   * True Positives Type 2: Actual and predicted is 2 weeks
   * False Positives: Predicted as 1 or 2 weeks response time, but actual was 3, 4, or 5 weeks
-  * False Negatives: Predicted as 3, 4, or 5 weeks, but actual was 1 or 2 weeks
+  * False Negatives: Predicted as 3, 4, or 5 weeks, but actual was 1 or 2 weeks -->
 <!-- The different response ratings are excellent, great, good, fair, and poor. What do we care about? We want all of them to be accurate if we are giving a time prediction. 
 What do we want to avoid? We want o avoid telling someone there will be an excellent reponse time when it would be poor. That will lead to very annoyed individuals. False Positive's for excellent, great, and good if we estimate that it will have a poor  -->
+* Evaluation - F1 core will be used
 * Baseline
   * Use the most common class as the prediction for all
   * Evaluate using F1 Score
