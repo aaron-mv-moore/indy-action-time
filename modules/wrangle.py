@@ -11,7 +11,7 @@ def get_mac_data():
         import pandas as pd
     '''
     # read the file
-    df = pd.read_csv('../data/Mayor_s_Action_Center_Service_Cases.csv')
+    df = pd.read_csv('./data/Mayor_s_Action_Center_Service_Cases.csv')
 
     return df
 
